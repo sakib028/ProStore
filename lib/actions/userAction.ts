@@ -29,10 +29,8 @@ export async function signInWithCredentials(
   }
 }
 //signOut function
-export async function signOutUser() {
+export async function signOutUser(_: FormData): Promise<void> {
   await signOut();
-  return {
-    success: true,
-    message: "Signed out successfully",
-  };
+
+  // optional but recommended
 }
