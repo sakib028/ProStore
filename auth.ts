@@ -5,6 +5,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 
 import { prisma } from "@/db/prisma";
 import { PrismaAdapter } from "@auth/prisma-adapter";
+import { Session } from "next-auth";
 
 export const config = {
   pages: {
@@ -58,11 +59,27 @@ export const config = {
     async session({ session, user, trigger, token }: any) {
       // Set the user id on the session
       session.user.id = token.sub;
+      session.user.role = token.role;
+      session.user.name = token.name;
       // If there is an update, set the name on the session
       if (trigger === "update") {
         session.user.name = user.name;
       }
       return session;
+    },
+    async jwt({ token, user, trigger, session }: any) {
+      // If user is available, set the name on the token
+      if (user) {
+        token.role = user.role;
+        if (token.role === "NO_NAME") {
+          token.role = user.email!.split("@")[0];
+        }
+        await prisma.user.update({
+          where: { id: user.id },
+          data: { role: token.role },
+        });
+      }
+      return token;
     },
   },
 } satisfies NextAuthConfig;
