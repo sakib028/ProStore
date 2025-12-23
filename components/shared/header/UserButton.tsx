@@ -1,4 +1,4 @@
-"use client";
+import { auth } from "@/auth";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -10,18 +10,13 @@ import {
 import { signOutUser } from "@/lib/actions/userAction";
 import { UserIcon } from "lucide-react";
 import Link from "next/link";
-import { Session } from "next-auth";
 
-type Props = {
-  session: Session | null;
-};
-
-export default function UserButton({ session }: Props) {
+export default async function UserButton() {
+  const session = await auth();
   if (!session) {
     return (
       <Button asChild>
         <Link href="/sign-in">
-          type Props = {};
           <UserIcon /> Sign In
         </Link>
       </Button>

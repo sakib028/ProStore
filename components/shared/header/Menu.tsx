@@ -38,7 +38,7 @@ export default async function Menu() {
                   <ShoppingCart /> Cart
                 </Link>
               </Button>
-              <UserButton session={session} />
+              <UserButton />
               <SheetDescription></SheetDescription>
             </SheetContent>
           </SheetTrigger>
