@@ -18,7 +18,6 @@ export function formatNumberDecimal(num: number): string {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function formatError(error: any): string {
-  console.log(error.name);
   if (error.name === "ZodError") {
     // 1. Zod actually uses 'issues'. 'errors' is often just a getter.
     // We use optional chaining and a fallback to an empty array.

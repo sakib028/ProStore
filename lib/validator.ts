@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { formatNumberDecimal } from "./utils";
+import { use } from "react";
 const currency = z
   .string()
   .refine(
@@ -37,3 +38,21 @@ export const signUpFormSchema = z
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",
   });
+
+export const cartItemSchema = z.object({
+  productId: z.string().min(1, " product ID is required"),
+  name: z.string().min(1, "Invalid product name"),
+  slug: z.string().min(1, "Invalid product slug"),
+  quantity: z.number().int().nonnegative("Quantity must be positive Number"),
+  image: z.string().min(1, "Invalid product image"),
+  price: currency,
+});
+export const insertCartSchema = z.object({
+  items: z.array(cartItemSchema),
+  itemsPrice: currency,
+  taxPrice: currency,
+  shippingPrice: currency,
+  totalPrice: currency,
+  sessionCartId: z.string().min(1, "Session Cart ID is required"),
+  userId: z.string().optional().nullable(),
+});

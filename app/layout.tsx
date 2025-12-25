@@ -4,6 +4,7 @@ import "@/assets/styles/globals.css";
 import { APP_DESCRIPTION, APP_NAME } from "@/lib/constants";
 import { SERVER_URL } from "../lib/constants/index";
 import { ThemeProvider } from "next-themes";
+import { ToastProvider } from "@/components/ToastProvider";
 const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: {
@@ -28,7 +29,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <ToastProvider>{children}</ToastProvider>
         </ThemeProvider>
       </body>
     </html>
