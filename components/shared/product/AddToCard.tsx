@@ -35,7 +35,7 @@ export default function AddToCard({ item }: { item: CardItem }) {
     } else {
       setToastData({
         title: "Added to Cart",
-        description: "Item successfully added to your cart",
+        description: res.message,
         variant: "success",
         actionLabel: "View Cart",
         actionHref: "/cart",

@@ -46,3 +46,15 @@ export function formatError(error: any): string {
     ? error.message
     : JSON.stringify(error) || "An unknown error occurred";
 }
+export function round2ToConvert(value: number | string): number {
+  // 1. Convert to number first to avoid string concatenation bugs
+  const num = typeof value === "number" ? value : Number(value);
+
+  // 2. Safety check: Handle invalid strings (like "abc")
+  if (isNaN(num)) {
+    throw new Error("Value is not a valid number");
+  }
+
+  // 3. Perform the rounding logic once
+  return Math.round((num + Number.EPSILON) * 100) / 100;
+}
