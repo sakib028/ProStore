@@ -1,18 +1,16 @@
 "use server";
-import { CardItem } from "@/types";
-import { converToPlainObject, formatError } from "@/lib/utils";
-import { round2ToConvert } from "@/lib/utils";
-import { cookies } from "next/headers";
 import { auth } from "@/auth";
 import { prisma } from "@/db/prisma";
-import { cartItemSchema, insertCartSchema } from "../validator";
-import { revalidatePath } from "next/cache";
-import { date, success } from "zod";
+import { converToPlainObject, formatError, round2ToConvert } from "@/lib/utils";
+import { CardItem } from "@/types";
 import { Prisma } from "@prisma/client";
-//Calculate cart price
-// Helper to ensure numbers have exactly 2 decimal places
+import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
+import { cartItemSchema, insertCartSchema } from "../validator";
+
 export const calcPrice = async (items: CardItem[]) => {
   const itemsPrice = round2ToConvert(
+    // Calculate sum of (price * quantity) for ALL items
     items.reduce((acc, item) => acc + Number(item.price) * item.quantity, 0)
   );
 
