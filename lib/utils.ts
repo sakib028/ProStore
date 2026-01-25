@@ -1,5 +1,6 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { number } from "zod";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -57,4 +58,22 @@ export function round2ToConvert(value: number | string): number {
 
   // 3. Perform the rounding logic once
   return Math.round((num + Number.EPSILON) * 100) / 100;
+}
+
+const CURRENCY_FORMATTER = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+  minimumFractionDigits: 2,
+});
+
+export function formatCurrency(amount: number | string | null) {
+  if (typeof amount === "number") {
+    return CURRENCY_FORMATTER.format(amount);
+  } else if (typeof amount === "string") {
+    const num = Number(amount);
+    if (!isNaN(num)) {
+      return CURRENCY_FORMATTER.format(num);
+    }
+  }
+  return "NaN";
 }

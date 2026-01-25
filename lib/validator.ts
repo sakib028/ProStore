@@ -5,7 +5,7 @@ const currency = z
   .string()
   .refine(
     (value) => /^\d+(\.\d{2})?$/.test(formatNumberDecimal(Number(value))),
-    "Price must have exactly two decimal places (e.g., 49.99)"
+    "Price must have exactly two decimal places (e.g., 49.99)",
   );
 
 export const insertProductSchema = z.object({
@@ -55,4 +55,14 @@ export const insertCartSchema = z.object({
   totalPrice: currency,
   sessionCartId: z.string().min(1, "Session Cart ID is required"),
   userId: z.string().optional().nullable(),
+});
+
+export const shippingAddressSchema = z.object({
+  fullName: z.string().min(3, "Full Name must be at least 3 characters"),
+  streetAddress: z.string().min(5, "Address must be at least 5 characters"),
+  city: z.string().min(2, "City must be at least 2 characters"),
+  postalCode: z.string().min(2, "Postal Code must be at least 2 characters"),
+  country: z.string().min(2, "Country must be at least 2 characters"),
+  lat: z.number().optional(),
+  lng: z.number().optional(),
 });

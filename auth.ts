@@ -7,6 +7,7 @@ import { prisma } from "@/db/prisma";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { Session } from "next-auth";
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 
 export const config = {
   pages: {
@@ -39,7 +40,7 @@ export const config = {
         if (user && user.password) {
           const isMatch = compareSync(
             credentials.password as string,
-            user.password
+            user.password,
           );
           // If password is correct, return user object
           if (isMatch) {
@@ -71,6 +72,7 @@ export const config = {
     async jwt({ token, user, trigger, session }: any) {
       // If user is available, set the name on the token
       if (user) {
+        token.id = user.id;
         token.role = user.role;
         if (token.role === "NO_NAME") {
           token.role = user.email!.split("@")[0];
@@ -79,10 +81,48 @@ export const config = {
           where: { id: user.id },
           data: { role: token.role },
         });
+        if (trigger === "signIn" || trigger === "signUp") {
+          const cookiesObject = await cookies();
+          const sessionCartId = cookiesObject.get("sessionCartId")?.value;
+          if (sessionCartId) {
+            const sessionCart = await prisma.cart.findFirst({
+              where: {
+                sessionCartId: sessionCartId,
+                userId: null,
+              },
+            });
+            if (sessionCart) {
+              await prisma.cart.deleteMany({
+                where: {
+                  sessionCartId,
+                },
+              });
+              await prisma.cart.update({
+                where: {
+                  id: sessionCart.id,
+                },
+                data: {
+                  userId: user.id,
+                },
+              });
+            }
+          }
+        }
       }
       return token;
     },
     authorized({ request, auth }): any {
+      const protectedPaths = [
+        /\/shipping-address/,
+        /\/payment-method/,
+        /\/place-order/,
+        /\/profile/,
+        /\/user\/(.*)/,
+        /\/admin\/(.*)/,
+        /\/order\/(.*)/,
+      ];
+      const { pathname } = request.nextUrl;
+      if (!auth && protectedPaths.some((p) => p.test(pathname))) return false;
       if (!request.cookies.get("sessionCartId")) {
         const sessionCartId = crypto.randomUUID();
         const newRequestHeader = new Headers(request.headers);
