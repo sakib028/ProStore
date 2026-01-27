@@ -2,6 +2,7 @@ import { neonConfig } from "@neondatabase/serverless";
 import { PrismaNeon } from "@prisma/adapter-neon";
 import { PrismaClient } from "@prisma/client";
 import ws from "ws";
+import { it } from "zod/v4/locales";
 
 // 1. Setup Neon WebSocket support
 if (typeof window === "undefined") {
@@ -24,6 +25,47 @@ const prismaClientSingleton = () => {
       product: {
         price: { compute: (p) => p.price.toString() },
         rating: { compute: (p) => p.rating.toString() },
+      },
+      cart: {
+        itemsPrice: {
+          needs: { itemsPrice: true },
+          compute: (c) => c.itemsPrice.toString(),
+        },
+        shippingPrice: {
+          needs: { shippingPrice: true },
+          compute: (c) => c.shippingPrice.toString(),
+        },
+        texPrice: {
+          needs: { texPrice: true },
+          compute: (c) => c.texPrice.toString(),
+        },
+        totalPrice: {
+          needs: { totalPrice: true },
+          compute: (c) => c.totalPrice.toString(),
+        },
+      },
+      order: {
+        itemsPrice: {
+          needs: { itemsPrice: true },
+          compute: (c) => c.itemsPrice.toString(),
+        },
+        shippingPrice: {
+          needs: { shippingPrice: true },
+          compute: (c) => c.shippingPrice.toString(),
+        },
+        taxPrice: {
+          needs: { taxPrice: true },
+          compute: (c) => c.taxPrice.toString(),
+        },
+        totalPrice: {
+          needs: { totalPrice: true },
+          compute: (c) => c.totalPrice.toString(),
+        },
+      },
+      orderItem: {
+        price: {
+          compute: (c) => c.price.toString(),
+        },
       },
     },
   });
